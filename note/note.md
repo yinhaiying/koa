@@ -171,3 +171,16 @@ app.use(async (ctx,next) => {
   await next();
 })
 ```
+
+### 在koa中处理post提交的数据
+
+在koa中使用koa-bodyparser来处理post提交的数据.
+```
+const bodyParser = require('koa-bodyparser');
+app.use(bodyParser());
+ 
+router.post('/add',async ctx => {
+  // 所有的内容都会被放置在ctx.request.body
+  ctx.body = ctx.request.body;
+});
+```

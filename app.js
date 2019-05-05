@@ -11,6 +11,14 @@ const views = require('koa-views');
 app.use(views('views', { extension: 'ejs' }))
 
 
+// body-parser中间件的使用
+const bodyParser = require('koa-bodyparser');
+app.use(bodyParser());
+ 
+router.post('/add',async ctx => {
+  // 所有的内容都会被放置在ctx.request.body
+  ctx.body = ctx.request.body;
+});
 
 
 //中间件
