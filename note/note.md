@@ -128,3 +128,46 @@ app.use(async (ctx,next) => {
 
 **中间件的执行顺序：**
 中间件的执行顺序是洋葱模型。
+
+### ejs 模板引擎
+e:effective 高效。
+js:javascript。
+ejs是一套简单的模板语言，帮助你利用简单的javascript代码生成html页面。
+
+**在koa中使用ejs模板引擎.**
+1. 安装
+```
+npm i koa-views
+npm i ejs
+```
+
+2. 引入koa-views配置中间件
+```
+const views = require('koa-views');
+app.use(views('views', { extension: 'ejs' }))
+```
+views方法中的第一个参数是ejs文件所在的目录。
+{extension:ejs}表示模板引擎的后缀必须是ejs而不是html.
+3. 使用ejs模板引擎进行渲染
+```
+await ctx.render('index')
+```
+
+**ejs的语法：牢记一点。在<%...%>...部分书写js代码。**
+只需要知道一些常见标签的使用即可。
+```
+<%= 输出数据到模板，原始数据是什么样就输出什么样。用于绑定常见数据。
+<%- 输出数据到模板，会对html标签等数据进行处理。用于绑定html数据。
+```
+
+**ejs全部变量的设置**
+假设我们在所有的路由的render函数中,都需要渲染一个数据。这时候如果在所有路由
+里面去进行设置就显得比较麻烦。我们可以通过ctx.state来进行设置.
+```
+app.use(async (ctx,next) => {
+  ctx.state = {
+    title:'ejs标题'
+  }
+  await next();
+})
+```

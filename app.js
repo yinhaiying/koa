@@ -4,18 +4,33 @@ let app = new Koa();
 
 let Router = require('koa-router');
 let router = new Router();
+
+//ejs模板引擎的引入和配置
+
+const views = require('koa-views');
+app.use(views('views', { extension: 'ejs' }))
+
+
+
+
 //中间件
 app.use(async (ctx,next) => {
   ctx.body = '这是一个中间件'
-  console.log(1)
+  // console.log(1)
   await next(); // 在这里执行时出现错误。
   // 进行错误处理
   if(ctx.status == 404){
     ctx.body = '404 page';
-    console.log(2)
+    // console.log(2)
   }
 })
 
+app.use(async (ctx,next) => {
+  ctx.state = {
+    title:'ejs标题'
+  }
+  await next();
+})
 
 
 
@@ -31,6 +46,10 @@ router.use('/test',async (ctx,next) => {
 })
 router.get('/test', async (ctx,next) => {
     ctx.body = '这是一个测试';
+})
+
+router.get('/index',async (ctx,next) => {
+  await ctx.render('index')
 })
 
 
