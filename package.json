@@ -1,0 +1,27 @@
+{
+  "name": "koa-v1",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev":"supervisor app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yinhaiying/koa.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/yinhaiying/koa/issues"
+  },
+  "homepage": "https://github.com/yinhaiying/koa#readme",
+  "dependencies": {
+    "koa": "^2.7.0",
+    "koa-router": "^7.4.0"
+  },
+  "devDependencies": {
+    "supervisor": "^0.12.0"
+  }
+}
