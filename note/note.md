@@ -275,3 +275,41 @@ httpOnly:是表示只有服务器端可以操作cookie。客户端不可以通�
   userinfo = new Buffer(userinfo,'base64').toString();
   console.log(userinfo)
 ```
+### session
+session是记录客户状态的另外一种机制，不同于cookie保存在客户端浏览器中。
+session需要保存在服务器中。
+
+**session的工作机制：**
+当浏览器访问服务器并发送第一次请求时，服务器端会创建一个session对象。生成一个类似于
+key,value的键值对，然后将key返回到浏览器客户端，浏览器会将key保存在cookie中。浏览器再次访问时，
+携带key,找到session对应key值的value。然后再将这个保存用户信息的vlaue值返回给客户端。
+koa中通过koa-session中使用session.
+1. 安装和配置
+```
+const session = require('koa-session')
+app.keys = ['some secret hurr']; // cookie的签名，默认即可
+const CONFIG = {
+  key: 'koa:sess',// 生成的cookie的名字。由于session是和cookie密切相关的。当生成session时会在浏览器端生成一个cookie
+  maxAge: 86400000,// cookie的过期时间， 需要设置
+  overwrite: true,  // 默认即可
+  httpOnly: true,// 表示只有在服务器端才能操作cookie。
+  signed: true,//签名 默认即可。 
+  rolling: false, // 每次访问的时候，都重新更新session。可以默认。
+  renew: true,// 每次访问的时候，session快要到期时才更新。最好设置为true。
+};
+app.use(session(CONFIG, app));
+```
+2. 使用
+```
+// session的设置
+router.get('/login',async (ctx) => {
+  ctx.session.userInfo = {name:'刘亦菲',age:30}
+})
+//session的获取
+router.get('/about',async (ctx) => {
+  let userInfo = ctx.session.userInfo;
+  console.log(userInfo)  // { name: '刘亦菲', age: 30 }
+})
+
+```
+

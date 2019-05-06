@@ -19,6 +19,20 @@ app.use(bodyParser());
 const server = require('koa-static');
 app.use(server(__dirname+'/static'))
 
+// koa-session 中间件的使用
+const session = require('koa-session')
+app.keys = ['some secret hurr']; // cookie的签名，默认即可
+const CONFIG = {
+  key: 'koa:sess',// 生成的cookie的名字。由于session是和cookie密切相关的。当生成session时会在浏览器端生成一个cookie
+  maxAge: 5000000,// cookie的过期时间， 需要设置
+  overwrite: true,  // 默认即可
+  httpOnly: true,// 表示只有在服务器端才能操作cookie。
+  signed: true,//签名 默认即可。 
+  rolling: false, // 每次访问的时候，都重新更新session。可以默认。
+  renew: true,// 每次访问的时候，session快要到期时才更新。最好设置为true。
+};
+app.use(session(CONFIG, app));
+
 
 
 router.post('/add',async ctx => {
@@ -78,6 +92,16 @@ router.get('/index',async (ctx,next) => {
   await ctx.render('index')
 })
 
+
+// session的使用
+router.get('/login',async (ctx) => {
+  ctx.session.userInfo = {name:'刘亦菲',age:30}
+})
+
+router.get('/about',async (ctx) => {
+  let userInfo = ctx.session.userInfo;
+  console.log(userInfo)  // { name: '刘亦菲', age: 30 }
+})
 
 
 
