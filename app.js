@@ -15,6 +15,12 @@ app.use(views('views', { extension: 'ejs' }))
 const bodyParser = require('koa-bodyparser');
 app.use(bodyParser());
  
+// koa-static 静态资源中间件
+const server = require('koa-static');
+app.use(server(__dirname+'/static'))
+
+
+
 router.post('/add',async ctx => {
   // 所有的内容都会被放置在ctx.request.body
   ctx.body = ctx.request.body;
@@ -59,6 +65,8 @@ router.get('/test', async (ctx,next) => {
 router.get('/index',async (ctx,next) => {
   await ctx.render('index')
 })
+
+
 
 
 // 注册路由
