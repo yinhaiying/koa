@@ -50,8 +50,16 @@ app.use(async (ctx,next) => {
 
 // ctx 替代了express中的res和res
 router.get('/', async (ctx,next) => {
-    // res.send('返回数据')
-    ctx.body = 'router';// ctx.body返回数据
+    // 在当前页面设置cookie
+    let value = new Buffer('刘亦菲').toString('base64'); // 转换成base64
+    console.log(value)
+    ctx.cookies.set('userinfo',value,{
+      maxAge:60*1000*60*60
+    })
+
+    // ctx.cookies.set('userinfo',value,{
+    //   maxAge:60*1000*60*60
+    // })
 })
 
 router.use('/test',async (ctx,next) => {
@@ -63,6 +71,10 @@ router.get('/test', async (ctx,next) => {
 })
 
 router.get('/index',async (ctx,next) => {
+  // 获取cookie
+  let userinfo = ctx.cookies.get('userinfo');
+  userinfo = new Buffer(userinfo,'base64').toString();
+  console.log(userinfo)
   await ctx.render('index')
 })
 

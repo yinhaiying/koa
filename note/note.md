@@ -220,3 +220,58 @@ app.use(server(__dirname+'/static')) // 配置中间件。将静态资源文件�
 我们再看css请求的路径http://localhost:4000/css/index.css。
 在请求资源时会首先去static目录下查找。而不是去通过路由查找。如果找不到
 会通过next继续往下查找，因为静态资源的目录可以配置多个。
+
+### cookie
+koa中cookie的使用不需要第三方中间件。
+1. cookie的设置.
+```
+ctx.cookies.set(name,value,[options])
+```
+2. cookie的获取.
+```
+ctx.cookies.get(name)
+```
+
+cookie的特点：
+1. 在不同页面间共享。也就是说我们可以在任何页面获取到cookie
+```
+//在主页设置cookie
+router.get('/', async (ctx,next) => {
+    // 在当前页面设置cookie
+    ctx.cookies.set('userinfo','liuyifei',{
+      maxAge:60*1000*60*60
+    })
+})
+
+// 在index页面获取cookie
+router.get('/index',async (ctx,next) => {
+  // 获取cookie
+  let userinfo = ctx.cookies.get('userinfo');
+  console.log(userinfo)
+  await ctx.render('index')
+})
+```
+当然我们也可以限制可以访问cookie的页面，通过可选参数中的path进行设置
+```
+    ctx.cookies.set('userinfo','liuyifei',{
+      maxAge:60*1000*60*60,
+      path:'/index'
+    })
+```
+path:表示能够访问cookie的页面，这里只有index页面才能够访问到cookie。
+httpOnly:是表示只有服务器端可以操作cookie。客户端不可以通过js来操作cookie。
+2. koa中cookie存在bug。无法将cookie的value值设置成中文。
+先通过buffer转换成base64
+```
+    let value = new Buffer('刘亦菲').toString('base64'); // 转换成base64
+    console.log(value)
+    ctx.cookies.set('userinfo',value,{
+      maxAge:60*1000*60*60
+    })
+```
+获取时再还原回来.
+```
+  let userinfo = ctx.cookies.get('userinfo');
+  userinfo = new Buffer(userinfo,'base64').toString();
+  console.log(userinfo)
+```
