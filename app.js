@@ -34,6 +34,10 @@ const CONFIG = {
 app.use(session(CONFIG, app));
 
 
+// mongodb类库的使用
+const Db = require('./module/db.js')
+
+
 
 router.post('/add',async ctx => {
   // 所有的内容都会被放置在ctx.request.body
@@ -96,13 +100,36 @@ router.get('/index',async (ctx,next) => {
 // session的使用
 router.get('/login',async (ctx) => {
   ctx.session.userInfo = {name:'刘亦菲',age:30}
+  console.time('start')
+  let user = await Db.find('user',{username:'刘亦菲'})
+  console.log(user)
+  console.timeEnd('start')
 })
 
 router.get('/about',async (ctx) => {
   let userInfo = ctx.session.userInfo;
   console.log(userInfo)  // { name: '刘亦菲', age: 30 }
+  console.time('start')
+  let user = await Db.find('user',{username:'刘亦菲'})
+  console.log(user)
+  console.timeEnd('start')
+  
 })
 
+router.get('/add',async (ctx) => {
+  let data = await Db.insert('user',{username:'迪丽热巴',age:30})
+  console.log(data.result)
+})
+
+router.get('/edit',async (ctx) => {
+  let data = await Db.update('user',{username:"唐嫣"},{username:'佟丽娅'})
+  console.log(data.result)
+})
+
+router.get('/delete',async (ctx) => {
+   let data =await Db.remove('user',{username:'唐嫣'})
+   console.log(data.result)
+})
 
 
 // 注册路由

@@ -313,3 +313,36 @@ router.get('/about',async (ctx) => {
 
 ```
 
+### mongodb类库的封装
+封装Db类的原因：在mongodb中每次查询时都需要连接数据库。连接数据库需要消耗约
+1000ms时间。事实上每次连接数据库都是通过创建一个新的client来进行连接，也就是说存在
+多次连接数据库的问题。我们考虑使用单例模式来得到client实例。只创建一次client，
+其他的client全都是第一次创建的实例。这样的话就只连接了一次。
+```
+  if(!this.dbClient){  // 解决数据库多次连接的问题
+      MongoClient.connect(config.dbUrl,(err,client) => {
+          if(!err){
+            const db = client.db(config.dbName);
+            this.dbClient = db;
+            resolve(this.dbClient)
+          }else{
+            reject(err)
+          }
+      })
+  }else{
+      resolve(this.dbClient)
+  }
+```
+虽然解决了数据可以多次连接的问题。但是我们创建了一个类。通过这个类的实例来调用方法。
+如果每次创建实例会导致this发生变化。这样的话还是会重新连接一次。因此我们需要确保我们的
+类实例也只创建一次。使用单例模式实现。通过调用静态方法来创建实例，而不是直接通过new来创建实例。
+```
+  static getInstance(){
+      if(!Db.instance){
+          Db.instance = new Db();
+      }
+      return Db.instance;
+  }
+  let db = Db.getInstance();
+
+```
