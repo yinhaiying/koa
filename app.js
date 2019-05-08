@@ -14,7 +14,7 @@ app.use(views('views', { extension: 'ejs' }))
 // body-parser中间件的使用
 const bodyParser = require('koa-bodyparser');
 app.use(bodyParser());
- 
+
 // koa-static 静态资源中间件
 const server = require('koa-static');
 app.use(server(__dirname+'/static'))
@@ -27,7 +27,7 @@ const CONFIG = {
   maxAge: 5000000,// cookie的过期时间， 需要设置
   overwrite: true,  // 默认即可
   httpOnly: true,// 表示只有在服务器端才能操作cookie。
-  signed: true,//签名 默认即可。 
+  signed: true,//签名 默认即可。
   rolling: false, // 每次访问的时候，都重新更新session。可以默认。
   renew: true,// 每次访问的时候，session快要到期时才更新。最好设置为true。
 };
@@ -47,7 +47,6 @@ router.post('/add',async ctx => {
 
 //中间件
 app.use(async (ctx,next) => {
-  ctx.body = '这是一个中间件'
   // console.log(1)
   await next(); // 在这里执行时出现错误。
   // 进行错误处理
@@ -113,12 +112,24 @@ router.get('/about',async (ctx) => {
   let user = await Db.find('user',{username:'刘亦菲'})
   console.log(user)
   console.timeEnd('start')
-  
+})
+
+router.get('/userlist',async (ctx) => {
+  let userlist = await Db.find('user',{});
+  console.log(userlist)
+  await ctx.render('userlist',{userlist})
 })
 
 router.get('/add',async (ctx) => {
-  let data = await Db.insert('user',{username:'迪丽热巴',age:30})
-  console.log(data.result)
+  // let data = await Db.insert('user',{username:'迪丽热巴',age:30})
+  // console.log(data.result)
+  await ctx.render('add')
+})
+
+router.post('/add',async (ctx) => {
+  // let data = await Db.insert('user',{username:'迪丽热巴',age:30})
+  // console.log(data.result)
+
 })
 
 router.get('/edit',async (ctx) => {

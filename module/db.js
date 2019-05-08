@@ -101,10 +101,6 @@ class Db{
     }
 
 }
-// let db = Db.getInstance();
-// db.find('user',{username:'刘亦菲'})
-// .then((res) => {
-//     console.log(res)
-// })
+
 
 module.exports = Db.getInstance();
