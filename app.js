@@ -5,6 +5,14 @@ let app = new Koa();
 let Router = require('koa-router');
 let router = new Router();
 
+// 引入子路由
+let api = require('./routes/api.js')
+let admin = require('./routes/admin.js')
+let index = require('./routes/index.js')
+
+router.use('/api',api)
+router.use('/admin',admin)
+router.use(index)
 //ejs模板引擎的引入和配置
 
 const views = require('koa-views');
@@ -32,125 +40,9 @@ const CONFIG = {
   renew: true,// 每次访问的时候，session快要到期时才更新。最好设置为true。
 };
 app.use(session(CONFIG, app));
-
-
-// mongodb类库的使用
-const Db = require('./module/db.js')
-
-
-
-router.post('/add',async ctx => {
-  // 所有的内容都会被放置在ctx.request.body
-  ctx.body = ctx.request.body;
-});
-
-
-//中间件
-app.use(async (ctx,next) => {
-  // console.log(1)
-  await next(); // 在这里执行时出现错误。
-  // 进行错误处理
-  if(ctx.status == 404){
-    ctx.body = '404 page';
-    // console.log(2)
-  }
-})
-
-app.use(async (ctx,next) => {
-  ctx.state = {
-    title:'ejs标题'
-  }
-  await next();
-})
-
-
-
-// ctx 替代了express中的res和res
-router.get('/', async (ctx,next) => {
-    // 在当前页面设置cookie
-    let value = new Buffer('刘亦菲').toString('base64'); // 转换成base64
-    console.log(value)
-    ctx.cookies.set('userinfo',value,{
-      maxAge:60*1000*60*60
-    })
-
-    // ctx.cookies.set('userinfo',value,{
-    //   maxAge:60*1000*60*60
-    // })
-})
-
-router.use('/test',async (ctx,next) => {
-    console.log('路由级中间件匹配完成之后继续往下执行');
-    await next();
-})
-router.get('/test', async (ctx,next) => {
-    ctx.body = '这是一个测试';
-})
-
-router.get('/index',async (ctx,next) => {
-  // 获取cookie
-  let userinfo = ctx.cookies.get('userinfo');
-  userinfo = new Buffer(userinfo,'base64').toString();
-  console.log(userinfo)
-  await ctx.render('index')
-})
-
-
-// session的使用
-router.get('/login',async (ctx) => {
-  ctx.session.userInfo = {name:'刘亦菲',age:30}
-  console.time('start')
-  let user = await Db.find('user',{username:'刘亦菲'})
-  console.log(user)
-  console.timeEnd('start')
-})
-
-router.get('/about',async (ctx) => {
-  let userInfo = ctx.session.userInfo;
-  console.log(userInfo)  // { name: '刘亦菲', age: 30 }
-  console.time('start')
-  let user = await Db.find('user',{username:'刘亦菲'})
-  console.log(user)
-  console.timeEnd('start')
-})
-
-router.get('/userlist',async (ctx) => {
-  let userlist = await Db.find('user',{});
-  console.log(userlist)
-  await ctx.render('userlist',{userlist})
-})
-
-router.get('/add',async (ctx) => {
-  // let data = await Db.insert('user',{username:'迪丽热巴',age:30})
-  // console.log(data.result)
-  await ctx.render('add')
-})
-
-router.post('/add',async (ctx) => {
-  // let data = await Db.insert('user',{username:'迪丽热巴',age:30})
-  // console.log(data.result)
-
-})
-
-router.get('/edit',async (ctx) => {
-  let data = await Db.update('user',{username:"唐嫣"},{username:'佟丽娅'})
-  console.log(data.result)
-})
-
-router.get('/delete',async (ctx) => {
-   let data =await Db.remove('user',{username:'唐嫣'})
-   console.log(data.result)
-})
-
-
 // 注册路由
 app
   .use(router.routes())
   .use(router.allowedMethods());// 这个是可选设置
-
-
-
-
-
 
 app.listen(4000)
