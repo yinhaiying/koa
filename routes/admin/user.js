@@ -1,20 +1,15 @@
 let Router = require('koa-router');
 let router = new Router();
 
+
+router.get('/',async (ctx) => {
+  await ctx.render('admin/user/list')
+})
 router.get('/add',async (ctx) => {
-  ctx.body = '增加用户'
+  await ctx.render('admin/user/add')
 })
 
-router.get('/edit',async (ctx) => {
-  ctx.body = '编辑用户'
-})
 
-router.get('/delete',async (ctx) => {
-  ctx.body = '删除用户'
-})
 
-router.get('/add',async (ctx) => {
-  ctx.body = '增加用户'
-})
 
 module.exports = router.routes();

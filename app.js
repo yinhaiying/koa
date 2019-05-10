@@ -1,3 +1,5 @@
+
+const path = require('path');
 let Koa = require('koa');
 let app = new Koa();
 
@@ -13,10 +15,14 @@ let index = require('./routes/index.js')
 router.use('/api',api)
 router.use('/admin',admin)
 router.use(index)
-//ejs模板引擎的引入和配置
 
-const views = require('koa-views');
-app.use(views('views', { extension: 'ejs' }))
+// koa-art-template模板的使用
+const render = require('koa-art-template');
+render(app, {
+  root: path.join(__dirname, 'views'),
+  extname: '.html',
+  debug: process.env.NODE_ENV !== 'production'
+});
 
 
 // body-parser中间件的使用
@@ -25,7 +31,7 @@ app.use(bodyParser());
 
 // koa-static 静态资源中间件
 const server = require('koa-static');
-app.use(server(__dirname+'/static'))
+app.use(server(__dirname+'/public'))
 
 // koa-session 中间件的使用
 const session = require('koa-session')
