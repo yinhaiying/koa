@@ -10,7 +10,7 @@ router.use('/login',login)
 router.use('/user',user)
 
 router.get('/',async (ctx) => {
-  ctx.body = '后台管理'
+  await ctx.render('admin/index')
 })
 
 
