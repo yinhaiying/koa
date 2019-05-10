@@ -15,3 +15,26 @@
 │   │── index.js                                // index部分路由
 ```
 
+### 权限判断
+通常来说在用户没有登录之前，是不需要访问任何页面的。
+也就是说我们需要对用户的访问权限进行控制。这session来保存用户信息。
+在登录成功后，在session中保存用户信息。再次访问其他页面时，查看session中时候存在这个用户信息。
+如果有则表示已经登录，如果没有则表示没有登录，需跳转到登录页面。
+```
+router.use(async (ctx,next) => {
+  ctx.state.__HOST__ = "http://"+ ctx.request.header.host;
+  console.log(ctx.url )
+  //已经登录继续向下匹配路由
+  if(ctx.session.userinfo){
+    await next()
+  }else{
+    // 没有登录跳转到登录页面
+    if(ctx.url == '/admin/login'|| ctx.url == '/admin/doLogin'){
+      await next();
+    }else{
+      ctx.redirect('/admin/login')
+    }
+  }
+})
+
+```

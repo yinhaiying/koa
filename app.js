@@ -46,6 +46,10 @@ const CONFIG = {
   renew: true,// 每次访问的时候，session快要到期时才更新。最好设置为true。
 };
 app.use(session(CONFIG, app));
+
+
+
+
 // 注册路由
 app
   .use(router.routes())
