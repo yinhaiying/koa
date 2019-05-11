@@ -10,11 +10,18 @@
 		<!-- fonts -->
 		<link rel="stylesheet" href="{{__ROOT__}}/admin/css/ace.min.css" />
 		<link rel="stylesheet" href="{{__ROOT__}}/admin/css/ace-rtl.min.css" />
-
+    <script src='{{__HOST__}}/admin/js/jquery-2.0.3.min.js' />
+    <script>
+      $(function(){
+        $('#code').click(function(){
+          $(this).attr('src','{{__HOST__}}/admin/login/code?t='+Math.random()*1000)
+        })
+      })
+    </script>
 		<style type="text/css">
 
 			.login-layout{
-				background: #428bca;
+				background:#428bca;
 			}
 			.login-layout .widget-box{
 				background-color:#428bca;
@@ -30,7 +37,7 @@
 				padding-bottom: 12px;
 			}
 
-			#verify_img{
+			#code{
 				position: relative;
 				left: 10px;
 				bottom: 0px;
@@ -76,8 +83,8 @@
 
 													<label class="block clearfix">
 														<span class="block input-icon input-icon-right">
-															<input type="password" class="form-control" placeholder="验证码" style="width:200px;float:left;" />
-														<img id="verify_img" src="{{__HOST__}}/admin/login/code" title="看不清？点击刷新" onclick="javascript:this.src='{{__HOST__}}/admin/login/code?mt='+Math.random()" />
+															<input type="password" name = "code" class="form-control" placeholder="验证码" style="width:200px;float:left;" />
+														<img id="code" src="{{__HOST__}}/admin/login/code" title="看不清？点击刷新" onclick="javascript:this.src='{{__HOST__}}/admin/login/code?mt='+Math.random()" />
 														</span>
 													</label>
 
