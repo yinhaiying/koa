@@ -4,15 +4,23 @@ const DB = require('../model/db.js')
 const tools = require('../tools/tools.js')
 // 继续使用路由的模块化。
 let login = require('./admin/login.js')
-let user= require('./admin/user.js')
+let manage= require('./admin/manage.js')
 
 const url = require('url')
 
 
 
 router.use(async (ctx,next) => {
-  ctx.state.__HOST__ = "http://"+ ctx.request.header.host;
   const path = url.parse(ctx.url).pathname;
+  let splitUrl = path.substr(1).split('/');
+  // console.log(splitUrl)
+  ctx.state.__HOST__ = "http://"+ ctx.request.header.host;
+  ctx.state.G = {
+    userinfo:ctx.session.userinfo,
+    url:splitUrl
+  }
+
+
   //已经登录继续向下匹配路由
   if(ctx.session.userinfo){
     await next()
@@ -35,5 +43,5 @@ router.get('/',async (ctx) => {
 
 
 router.use('/login',login)
-router.use('/user',user)
+router.use('/manage',manage)
 module.exports = router.routes();

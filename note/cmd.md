@@ -75,3 +75,34 @@ router.get('/code', async (ctx) => {
    <meta http-equiv="refresh" content="3; url={{redirect}}" />
 
 ```
+
+### 后台管理相关功能的实现
+
+#### 左侧导航分类选中功能
+左侧导航栏通常会有较多的的类别。比如管理员管理,分类管理，内容管理等。我们每次访问不同类别时，对应的nav需要进行高亮或者展开等操作。
+**实现方法是：**根据路由来确定究竟访问的是哪个页面。通常每一个分类都有特殊的路由单词。比如管理员/admin或者/manage等。
+```
+  let splitUrl = path.substr(1).split('/')
+  ctx.state.__HOST__ = "http://"+ ctx.request.header.host;
+  ctx.state.G = {
+    userinfo:ctx.session.userinfo,
+    url:splitUrl
+  }
+```
+从url中获取到数组:
+```
+[ 'admin', 'manage', 'add' ]
+```
+数组中manage表示这个管理员管理nav。数组中add表示这个管理员管理下面的添加路由。
+根据数组中是否存在manage和add等进行管理。
+```
+<li {{if G.url[1] == 'manage'}} class = "active open" {{/if}}>
+
+```
+如上所示：数组中第二个单词是manage表示这是管理员路由，因此对应的导航栏是管理员管理。因此需要展开。
+```
+<li {{if !G.url[2]}} class = "active" {{/if}} >  // 没有第三个单词
+
+<li {{if G.url[2] == 'add'}} class = "active" {{/if}}>// 第三个单词是add
+```
+根据是否有第三个单词和第三个单词是否为add来判断子路由。应该高亮哪一个子路由。

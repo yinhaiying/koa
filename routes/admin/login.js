@@ -74,4 +74,16 @@ router.get('/code', async (ctx) => {
 })
 
 
+/**
+ * 退出登录:
+ *1. 清除session
+ *2. 跳转到login页面
+ */
+
+router.get('/logout',async (ctx) => {
+  ctx.session.userinfo = ''
+  ctx.redirect(ctx.state.__HOST__+'/admin/login')
+})
+
+
 module.exports = router.routes();
