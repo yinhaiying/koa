@@ -18,10 +18,14 @@ router.use(index)
 
 // koa-art-template模板的使用
 const render = require('koa-art-template');
+const sd = require('silly-datetime');
 render(app, {
   root: path.join(__dirname, 'views'),
   extname: '.html',
-  debug: process.env.NODE_ENV !== 'production'
+  debug: process.env.NODE_ENV !== 'production',
+  dateFormat:dateFormat = function(value){
+    return sd.format(new Date(value),'YYYY-MM-DD HH:mm')
+  }
 });
 
 
@@ -46,6 +50,13 @@ const CONFIG = {
   renew: true,// 每次访问的时候，session快要到期时才更新。最好设置为true。
 };
 app.use(session(CONFIG, app));
+
+// koa-jsonp中间件的使用
+const jsonp = require('koa-jsonp')
+
+app.use(jsonp())
+
+
 
 
 

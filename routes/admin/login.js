@@ -36,6 +36,13 @@ router.post('/doLogin', async (ctx) => {
       // 成功以后把用户信息写到session中
       console.log('登录成功')
       ctx.session.userinfo = result[0];
+
+      // 更新管理员最后登录的时间
+      await DB.update('admin',{_id:result[0]._id},{last_time:new Date()})
+
+
+
+
       ctx.redirect('/admin')
     }else{
       // 登录失败

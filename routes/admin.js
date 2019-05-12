@@ -5,7 +5,7 @@ const tools = require('../tools/tools.js')
 // 继续使用路由的模块化。
 let login = require('./admin/login.js')
 let manage= require('./admin/manage.js')
-
+let index = require('./admin/index.js')
 const url = require('url')
 
 
@@ -37,11 +37,9 @@ router.use(async (ctx,next) => {
 
 
 
-router.get('/',async (ctx) => {
-  await ctx.render('admin/index')
-})
 
 
+router.use(index)
 router.use('/login',login)
 router.use('/manage',manage)
 module.exports = router.routes();
