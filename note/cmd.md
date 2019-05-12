@@ -106,3 +106,35 @@ router.get('/code', async (ctx) => {
 <li {{if G.url[2] == 'add'}} class = "active" {{/if}}>// 第三个单词是add
 ```
 根据是否有第三个单词和第三个单词是否为add来判断子路由。应该高亮哪一个子路由。
+
+#### 管理员的增删改查功能的实现
+
+编辑时需要传递一个对应的id过去。
+```
+<a href="{{__HOST__}}/admin/manage/edit?id={{@$value._id}}"  class="btn btn-xs btn-info">
+    <i class="icon-edit bigger-120"></i>
+</a>
+```
+根据这个传递过来的id，后端获取到对应的信息。前端根据这个信息先进行展示。
+```
+
+router.get('/edit',async (ctx) => {
+  console.log(ctx.query.id)
+  let userInfo = await DB.find('admin',{"_id":DB.getObjectId(ctx.query.id)})
+  await ctx.render('admin/manage/edit',{userInfo:userInfo[0]})
+})
+```
+后台想要更新相对应的文档的数据，同样需要获取到这个id。后台想要获取到这个id只能通过一个隐藏的input将id传递过去。
+```
+<div class="col-sm-10">
+        <input type="hidden" name="id" value = "{{@userInfo._id}}">  // 隐藏的input用于将id传递过去。
+        <input type="text" id="username"  name="username" class="col-xs-10 col-sm-5" value="{{userInfo.username}}" />
+</div>
+```
+修改完成之后，后台能够接受所有的数据，然后进行更改。
+```
+router.post('/doEdit',async (ctx) => {
+  console.log(ctx.request.body)
+  await DB.update('admin',{"_id":DB.getObjectId(ctx.request.body.id)},{username:ctx.request.body.username})
+})
+```

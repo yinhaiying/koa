@@ -4,8 +4,10 @@
 // 其他的client全都是第一次创建的实例。这样的话就只连接了一次。
 
 const config = require('./config.js')
+const  MongoDB = require('mongodb');
+let MongoClient = MongoDB.MongoClient;
 
-let MongoClient = require('mongodb').MongoClient;
+const ObjectID = MongoDB.ObjectID;
 
 class Db{
     static getInstance(){
@@ -98,6 +100,11 @@ class Db{
                 })
             })
         })
+    }
+
+    getObjectId(id){
+
+      return new ObjectID(id);
     }
 
 }
