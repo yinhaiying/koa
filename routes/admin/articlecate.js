@@ -5,20 +5,31 @@ const tools = require('../../tools/tools.js')
 
 
 router.get('/',async (ctx) => {
-  ctx.body = 'articlecates'
+  var result=await DB.find('articlecate',{});
+
+  console.log(tools.cateToList(result));
+  await  ctx.render('admin/articlecate/index',{
+      list: tools.cateToList(result)
+  });
 })
 
 /**
- * 增加管理员页面展示
+ * 增加分类页面展示
  *
  */
 router.get('/add',async (ctx) => {
-  await ctx.render('admin/manage/add')
+
+  // 获取一级分类
+  let result =await DB.find('articlecate',{pid:'0'})
+
+  await ctx.render('admin/articlecate/add',{
+    catelist:result
+  })
 })
 
 
 /**
- * 增加管理员:
+ * 增加分类:
  * 1.获取表单提交的数据
  * 2.验证数据是否合法
  * 3.在数据库中查询管理员是否已经存在
@@ -28,28 +39,21 @@ router.get('/add',async (ctx) => {
 router.post('/doAdd',async (ctx) => {
   // 1.获取表单数据
   let data = ctx.request.body;
-  data.password = tools.md5('123456');
-  // 2. 数据库中查询管理员是否存在
-  let result = await DB.find('admin',{username:data.username});
+  console.log(data)
+  // 2. 数据库中查询该分类是否存在
+  let result = await DB.find('articlecate',{title:data.title});
   console.log(result)
   if(result.length == 0){
-  // 4. 新增管理员
-    let json = {
-      username:data.username,
-      password:tools.md5(data.password),
-      status:0,
-      last_time:new Date()
-    }
-    let result = await DB.insert('admin',json)
-    const adminList = await DB.find('admin',{});
-    // console.log(result)
-    await ctx.render('admin/manage/list',{
-      list:adminList
+  // 4. 新增分类
+    let result = await DB.insert('articlecate',data)
+    const adminList = await DB.find('articlecat',{pid:'0'});
+    await ctx.render('admin/articlecate/add',{
+      catelist:result
     })
   }else{
     ctx.render('admin/error',{
-      message:'该管理员已经存在',
-      url:ctx.state.__HOST__ + '/admin/manage/add'
+      message:'该分类已经存在',
+      url:ctx.state.__HOST__ + '/admin/articlecate/add'
     })
   }
 
