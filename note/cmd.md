@@ -138,3 +138,54 @@ router.post('/doEdit',async (ctx) => {
   await DB.update('admin',{"_id":DB.getObjectId(ctx.request.body.id)},{username:ctx.request.body.username})
 })
 ```
+
+### 分类管理相关功能的实现
+####分类管理表结构的设计
+
+分类管理有一个关键字段pid。当这个数据是一级分类时，设置该字段为0.当该数据是二级分类或者三级分类时，设计该字段的值为对应的一级字段的id.
+
+```
+id ObjectId   title String                    pid String
+
+5abdfdf4      技术s(一级分类)                  0
+666ffggg      Vue(属于技术下的二级分类)         5abdfdf4
+```
+比如这里的vue,react,angular等属于技术下的分类。那么我们只需要让vue,react和angular的pid等于技术的id即可将它们关联起来。
+
+**对数据库中的数据进行处理**
+我们希望将关联起来的数据能够放到一起处理。得到类似于下面这种格式的数据:
+其中技术是一级分类，而vue和react是技术下的二级分类
+```
+{
+  'title':'技术',
+   list:[
+     {title:'vue'},
+     {title:'react'},
+   ]
+}
+
+```
+最终实现的代码如下：
+```
+  cateTolist:(data) => {
+    // 1. 获取一级分类  一级分类的pid = 0
+    let firstArr = [];
+    for(var i = 0; i < data.length;i++){
+      if(data[i].pid == 0){
+        firstArr.push(data[i])
+      }
+    }
+
+    // 2. 获取二级分类
+    for(var i = 0;i < firstArr.length;i++){
+      firstArr[i].list = [];
+      for(let j = 0;j < data.length;j++){
+        if(firstArr[i]._id == data[i].pid){
+          firstArr[i].list.push(data[i])
+        }
+      }
+    }
+    return firstArr
+  }
+
+```

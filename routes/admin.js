@@ -6,6 +6,7 @@ const tools = require('../tools/tools.js')
 let login = require('./admin/login.js')
 let manage= require('./admin/manage.js')
 let index = require('./admin/index.js')
+let articlecate = require('./admin/articlecate.js')
 const url = require('url')
 
 
@@ -42,4 +43,5 @@ router.use(async (ctx,next) => {
 router.use(index)
 router.use('/login',login)
 router.use('/manage',manage)
+router.use('/articlecate',articlecate)
 module.exports = router.routes();
